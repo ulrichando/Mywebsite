@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML Tag Builder</title>
+    <!-- Use a fun, kid-friendly font from Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* General body and container styling */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 900px;
+            width: 100%;
+            background-color: #fff;
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+            padding: 24px;
+            box-sizing: border-box;
+        }
+
+        /* Title and instructions */
+        h1 {
+            color: #4a90e2;
+            text-align: center;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        p.instructions {
+            text-align: center;
+            font-size: 1.1em;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        /* Tag palette styling */
+        .tag-palette {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .tag-button {
+            background-color: #a8d5e5;
+            color: #1e3a5f;
+            border: none;
+            padding: 12px 0;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s, background-color 0.2s;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .tag-button:hover {
+            transform: translateY(-2px);
+            background-color: #7abccf;
+        }
+
+        .tag-button:active {
+            transform: translateY(0);
+        }
+
+        /* Control button styling */
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .control-button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .control-button.clear {
+            background-color: #e74c3c;
+        }
+
+        .control-button:hover {
+            opacity: 0.9;
+        }
+
+        /* Creation area styling */
+        .creation-area-container {
+            border: 2px dashed #ccc;
+            border-radius: 12px;
+            padding: 20px;
+            min-height: 400px;
+            background-color: #fafafa;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .creation-area h1,
+        .creation-area h2,
+        .creation-area p,
+        .creation-area li,
+        .creation-area td,
+        .creation-area em,
+        .creation-area strong,
+        .creation-area b,
+        .creation-area i {
+            margin: 10px 0;
+        }
+
+        /* Default content styling */
+        .creation-area p {
+            font-size: 1em;
+        }
+
+        .creation-area h1 {
+            font-size: 2em;
+        }
+
+        .creation-area h2 {
+            font-size: 1.5em;
+        }
+
+        .creation-area h3 {
+            font-size: 1.2em;
+        }
+
+        .creation-area a {
+            color: #2980b9;
+            text-decoration: none;
+        }
+
+        .creation-area a:hover {
+            text-decoration: underline;
+        }
+
+        .creation-area img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+        }
+
+        .creation-area ul {
+            padding-left: 20px;
+        }
+
+        .creation-area button {
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .creation-area table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .creation-area th,
+        .creation-area td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        .creation-area hr {
+            border: 0;
+            height: 1px;
+            background: #ccc;
+            margin: 20px 0;
+        }
+
+        .creation-area .placeholder {
+            color: #999;
+            font-style: italic;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>My HTML Creation Game!</h1>
+        <p class="instructions">Click on a button to add that tag to your page. Use your imagination to build whatever
+            you want!</p>
+
+        <!-- Tag palette with 20 common tags -->
+        <div class="tag-palette">
+            <button class="tag-button" data-tag="h1">h1</button>
+            <button class="tag-button" data-tag="h2">h2</button>
+            <button class="tag-button" data-tag="h3">h3</button>
+            <button class="tag-button" data-tag="p">p</button>
+            <button class="tag-button" data-tag="a">a</button>
+            <button class="tag-button" data-tag="img">img</button>
+            <button class="tag-button" data-tag="ul">ul</button>
+            <button class="tag-button" data-tag="li">li</button>
+            <button class="tag-button" data-tag="b">b</button>
+            <button class="tag-button" data-tag="i">i</button>
+            <button class="tag-button" data-tag="span">span</button>
+            <button class="tag-button" data-tag="div">div</button>
+            <button class="tag-button" data-tag="br">br</button>
+            <button class="tag-button" data-tag="hr">hr</button>
+            <button class="tag-button" data-tag="table">table</button>
+            <button class="tag-button" data-tag="tr">tr</button>
+            <button class="tag-button" data-tag="td">td</button>
+            <button class="tag-button" data-tag="em">em</button>
+            <button class="tag-button" data-tag="strong">strong</button>
+            <button class="tag-button" data-tag="button">button</button>
+        </div>
+
+        <!-- Control buttons -->
+        <div class="controls">
+            <button class="control-button clear">Clear Page</button>
+        </div>
+
+        <!-- Main creative space -->
+        <div class="creation-area-container">
+            <div class="creation-area">
+                <!-- Content will be added here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const tagPalette = document.querySelector('.tag-palette');
+            const creationArea = document.querySelector('.creation-area');
+            const clearButton = document.querySelector('.control-button.clear');
+
+            // Listen for clicks on the tag buttons
+            tagPalette.addEventListener('click', (event) => {
+                // Check if the clicked element is a button
+                if (event.target.classList.contains('tag-button')) {
+                    const tag = event.target.dataset.tag;
+                    let newElement;
+
+                    // Create the new element based on the data-tag attribute
+                    switch (tag) {
+                        case 'h1':
+                        case 'h2':
+                        case 'h3':
+                            newElement = document.createElement(tag);
+                            newElement.textContent = `This is a ${tag} heading!`;
+                            break;
+                        case 'p':
+                            newElement = document.createElement('p');
+                            newElement.textContent = "This is a paragraph of text.";
+                            break;
+                        case 'a':
+                            newElement = document.createElement('a');
+                            newElement.textContent = "Click Me!";
+                            newElement.href = "#"; // Placeholder link
+                            break;
+                        case 'img':
+                            newElement = document.createElement('img');
+                            // Use a fun placeholder image
+                            newElement.src = "https://placehold.co/400x200/4a90e2/ffffff?text=Image+Tag!";
+                            newElement.alt = "A placeholder image";
+                            break;
+                        case 'ul':
+                            newElement = document.createElement('ul');
+                            // Add a default list item
+                            newElement.innerHTML = `<li>First item</li><li>Second item</li>`;
+                            break;
+                        case 'li':
+                            newElement = document.createElement('li');
+                            newElement.textContent = "A new list item";
+                            // If a UL exists, add it there, otherwise, add it to the main area
+                            const ul = creationArea.querySelector('ul');
+                            if (ul) {
+                                ul.appendChild(newElement);
+                                return; // Stop the function here
+                            } else {
+                                // Add it to a new UL if no UL exists
+                                const newUl = document.createElement('ul');
+                                newUl.appendChild(newElement);
+                                newElement = newUl;
+                            }
+                            break;
+                        case 'b':
+                        case 'i':
+                        case 'span':
+                        case 'em':
+                        case 'strong':
+                            newElement = document.createElement(tag);
+                            newElement.textContent = `Some ${tag} text.`;
+                            break;
+                        case 'div':
+                            newElement = document.createElement('div');
+                            newElement.textContent = "A simple box or container.";
+                            newElement.style.padding = '10px';
+                            newElement.style.border = '1px solid #ddd';
+                            newElement.style.margin = '10px 0';
+                            break;
+                        case 'br':
+                            newElement = document.createElement('br');
+                            break;
+                        case 'hr':
+                            newElement = document.createElement('hr');
+                            break;
+                        case 'table':
+                            newElement = document.createElement('table');
+                            newElement.innerHTML = `
+                                <thead><tr><th>Header 1</th><th>Header 2</th></tr></thead>
+                                <tbody><tr><td>Data 1</td><td>Data 2</td></tr></tbody>
+                            `;
+                            break;
+                        case 'tr':
+                            newElement = document.createElement('tr');
+                            newElement.innerHTML = `<td>New Row Data 1</td><td>New Row Data 2</td>`;
+                            // Try to append to the first table body found
+                            const tbody = creationArea.querySelector('tbody');
+                            if (tbody) {
+                                tbody.appendChild(newElement);
+                                return;
+                            } else {
+                                const newTable = document.createElement('table');
+                                const newTbody = document.createElement('tbody');
+                                newTbody.appendChild(newElement);
+                                newTable.appendChild(newTbody);
+                                newElement = newTable;
+                            }
+                            break;
+                        case 'td':
+                            newElement = document.createElement('td');
+                            newElement.textContent = "New Cell";
+                            // Try to append to the last row found
+                            const lastTr = creationArea.querySelector('tr:last-of-type');
+                            if (lastTr) {
+                                lastTr.appendChild(newElement);
+                                return;
+                            } else {
+                                const newTable = document.createElement('table');
+                                const newTbody = document.createElement('tbody');
+                                const newTr = document.createElement('tr');
+                                newTr.appendChild(newElement);
+                                newTbody.appendChild(newTr);
+                                newTable.appendChild(newTbody);
+                                newElement = newTable;
+                            }
+                            break;
+                        case 'button':
+                            newElement = document.createElement('button');
+                            newElement.textContent = "Click Me!";
+                            newElement.addEventListener('click', () => alert("Button clicked!"));
+                            break;
+                        default:
+                            console.log(`Tag ${tag} is not supported yet.`);
+                            return; // Exit if tag is not recognized
+                    }
+                    creationArea.appendChild(newElement);
+                }
+            });
+
+            // Listen for clicks on the clear button
+            clearButton.addEventListener('click', () => {
+                creationArea.innerHTML = '';
+            });
+
+            // Prevent the default behavior of anchor tags
+            creationArea.addEventListener('click', (event) => {
+                if (event.target.tagName === 'A') {
+                    event.preventDefault();
+                }
+            });
+        });
+
+        // Custom alert function since native alerts are blocked in some environments
+        function alert(message) {
+            const existingAlert = document.getElementById('custom-alert');
+            if (existingAlert) {
+                existingAlert.remove();
+            }
+
+            const alertDiv = document.createElement('div');
+            alertDiv.id = 'custom-alert';
+            alertDiv.style.cssText = `
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background-color: #fff;
+                padding: 20px 40px;
+                border-radius: 12px;
+                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+                z-index: 1000;
+                text-align: center;
+                border: 2px solid #4CAF50;
+            `;
+            alertDiv.innerHTML = `
+                <p>${message}</p>
+                <button onclick="document.getElementById('custom-alert').remove()" style="margin-top: 15px; padding: 10px 20px; border-radius: 8px; border: none; background-color: #4CAF50; color: white; cursor: pointer;">OK</button>
+            `;
+            document.body.appendChild(alertDiv);
+        }
+    </script>
+</body>
+
+</html>
