@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HTML Tag Builder</title>
+    <title>HTML Tag Builder Game</title>
     <!-- Use a fun, kid-friendly font from Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
     <style>
@@ -43,6 +43,34 @@
             font-size: 1.1em;
             color: #666;
             margin-bottom: 20px;
+        }
+
+        /* Game prompt and feedback */
+        .game-prompt {
+            text-align: center;
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #1e3a5f;
+            margin-bottom: 15px;
+        }
+
+        .feedback-message {
+            text-align: center;
+            font-weight: bold;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            display: none;
+        }
+
+        .feedback-message.correct {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .feedback-message.incorrect {
+            background-color: #f8d7da;
+            color: #721c24;
         }
 
         /* Tag palette styling */
@@ -197,8 +225,12 @@
 <body>
     <div class="container">
         <h1>My HTML Creation Game!</h1>
-        <p class="instructions">Click on a button to add that tag to your page. Use your imagination to build whatever
-            you want!</p>
+        <p class="instructions">Choose the right tag to complete the task below. You'll get a new challenge after each
+            correct answer!</p>
+
+        <!-- Game prompt and feedback area -->
+        <div class="game-prompt"></div>
+        <div class="feedback-message"></div>
 
         <!-- Tag palette with 20 common tags -->
         <div class="tag-palette">
@@ -242,135 +274,180 @@
             const tagPalette = document.querySelector('.tag-palette');
             const creationArea = document.querySelector('.creation-area');
             const clearButton = document.querySelector('.control-button.clear');
+            const promptElement = document.querySelector('.game-prompt');
+            const feedbackElement = document.querySelector('.feedback-message');
+
+            // Game logic variables and prompts
+            let currentPromptIndex = 0;
+            const prompts = [
+                { text: "1. Create a big heading for your page.", tag: "h1" },
+                { text: "2. Add a sub-heading below it.", tag: "h2" },
+                { text: "3. Write a short paragraph of text.", tag: "p" },
+                { text: "4. Add a list of your favorite things.", tag: "ul" },
+                { text: "5. Add an item to your list.", tag: "li" },
+                { text: "6. Make the text **bold**.", tag: "b" },
+                { text: "7. Make the text *italic*.", tag: "i" },
+                { text: "8. Add a line break to start a new line.", tag: "br" },
+                { text: "9. Put a horizontal line across the page.", tag: "hr" },
+                { text: "10. Add a picture of a cat.", tag: "img" },
+            ];
+
+            // Function to update the prompt
+            const updatePrompt = () => {
+                if (currentPromptIndex < prompts.length) {
+                    promptElement.textContent = prompts[currentPromptIndex].text;
+                    feedbackElement.style.display = 'none';
+                } else {
+                    promptElement.textContent = "You did it! You're an HTML expert!";
+                    feedbackElement.style.display = 'block';
+                    feedbackElement.className = 'feedback-message correct';
+                    feedbackElement.textContent = "Congratulations! You completed all the challenges.";
+                    tagPalette.querySelectorAll('button').forEach(button => button.disabled = true);
+                }
+            };
+
+            // Function to display feedback
+            const showFeedback = (isCorrect, message) => {
+                feedbackElement.textContent = message;
+                feedbackElement.style.display = 'block';
+                feedbackElement.classList.remove('correct', 'incorrect');
+                feedbackElement.classList.add(isCorrect ? 'correct' : 'incorrect');
+            };
 
             // Listen for clicks on the tag buttons
             tagPalette.addEventListener('click', (event) => {
-                // Check if the clicked element is a button
-                if (event.target.classList.contains('tag-button')) {
+                // Check if the clicked element is a button and the game isn't finished
+                if (event.target.classList.contains('tag-button') && currentPromptIndex < prompts.length) {
                     const tag = event.target.dataset.tag;
-                    let newElement;
+                    const correctTag = prompts[currentPromptIndex].tag;
 
-                    // Create the new element based on the data-tag attribute
-                    switch (tag) {
-                        case 'h1':
-                        case 'h2':
-                        case 'h3':
-                            newElement = document.createElement(tag);
-                            newElement.textContent = `This is a ${tag} heading!`;
-                            break;
-                        case 'p':
-                            newElement = document.createElement('p');
-                            newElement.textContent = "This is a paragraph of text.";
-                            break;
-                        case 'a':
-                            newElement = document.createElement('a');
-                            newElement.textContent = "Click Me!";
-                            newElement.href = "#"; // Placeholder link
-                            break;
-                        case 'img':
-                            newElement = document.createElement('img');
-                            // Use a fun placeholder image
-                            newElement.src = "https://placehold.co/400x200/4a90e2/ffffff?text=Image+Tag!";
-                            newElement.alt = "A placeholder image";
-                            break;
-                        case 'ul':
-                            newElement = document.createElement('ul');
-                            // Add a default list item
-                            newElement.innerHTML = `<li>First item</li><li>Second item</li>`;
-                            break;
-                        case 'li':
-                            newElement = document.createElement('li');
-                            newElement.textContent = "A new list item";
-                            // If a UL exists, add it there, otherwise, add it to the main area
-                            const ul = creationArea.querySelector('ul');
-                            if (ul) {
-                                ul.appendChild(newElement);
-                                return; // Stop the function here
-                            } else {
-                                // Add it to a new UL if no UL exists
-                                const newUl = document.createElement('ul');
-                                newUl.appendChild(newElement);
-                                newElement = newUl;
-                            }
-                            break;
-                        case 'b':
-                        case 'i':
-                        case 'span':
-                        case 'em':
-                        case 'strong':
-                            newElement = document.createElement(tag);
-                            newElement.textContent = `Some ${tag} text.`;
-                            break;
-                        case 'div':
-                            newElement = document.createElement('div');
-                            newElement.textContent = "A simple box or container.";
-                            newElement.style.padding = '10px';
-                            newElement.style.border = '1px solid #ddd';
-                            newElement.style.margin = '10px 0';
-                            break;
-                        case 'br':
-                            newElement = document.createElement('br');
-                            break;
-                        case 'hr':
-                            newElement = document.createElement('hr');
-                            break;
-                        case 'table':
-                            newElement = document.createElement('table');
-                            newElement.innerHTML = `
-                                <thead><tr><th>Header 1</th><th>Header 2</th></tr></thead>
-                                <tbody><tr><td>Data 1</td><td>Data 2</td></tr></tbody>
-                            `;
-                            break;
-                        case 'tr':
-                            newElement = document.createElement('tr');
-                            newElement.innerHTML = `<td>New Row Data 1</td><td>New Row Data 2</td>`;
-                            // Try to append to the first table body found
-                            const tbody = creationArea.querySelector('tbody');
-                            if (tbody) {
-                                tbody.appendChild(newElement);
-                                return;
-                            } else {
-                                const newTable = document.createElement('table');
-                                const newTbody = document.createElement('tbody');
-                                newTbody.appendChild(newElement);
-                                newTable.appendChild(newTbody);
-                                newElement = newTable;
-                            }
-                            break;
-                        case 'td':
-                            newElement = document.createElement('td');
-                            newElement.textContent = "New Cell";
-                            // Try to append to the last row found
-                            const lastTr = creationArea.querySelector('tr:last-of-type');
-                            if (lastTr) {
-                                lastTr.appendChild(newElement);
-                                return;
-                            } else {
-                                const newTable = document.createElement('table');
-                                const newTbody = document.createElement('tbody');
-                                const newTr = document.createElement('tr');
-                                newTr.appendChild(newElement);
-                                newTbody.appendChild(newTr);
-                                newTable.appendChild(newTbody);
-                                newElement = newTable;
-                            }
-                            break;
-                        case 'button':
-                            newElement = document.createElement('button');
-                            newElement.textContent = "Click Me!";
-                            newElement.addEventListener('click', () => alert("Button clicked!"));
-                            break;
-                        default:
-                            console.log(`Tag ${tag} is not supported yet.`);
-                            return; // Exit if tag is not recognized
+                    if (tag === correctTag) {
+                        showFeedback(true, "Correct! Now for the next challenge.");
+                        // Create the new element based on the data-tag attribute
+                        let newElement;
+                        switch (tag) {
+                            case 'h1':
+                            case 'h2':
+                            case 'h3':
+                                newElement = document.createElement(tag);
+                                newElement.textContent = `This is a ${tag} heading!`;
+                                break;
+                            case 'p':
+                                newElement = document.createElement('p');
+                                newElement.textContent = "This is a paragraph of text.";
+                                break;
+                            case 'a':
+                                newElement = document.createElement('a');
+                                newElement.textContent = "Click Me!";
+                                newElement.href = "#"; // Placeholder link
+                                break;
+                            case 'img':
+                                newElement = document.createElement('img');
+                                newElement.src = "https://placehold.co/400x200/4a90e2/ffffff?text=Image+Tag!";
+                                newElement.alt = "A placeholder image";
+                                break;
+                            case 'ul':
+                                newElement = document.createElement('ul');
+                                newElement.innerHTML = `<li>First item</li><li>Second item</li>`;
+                                break;
+                            case 'li':
+                                newElement = document.createElement('li');
+                                newElement.textContent = "A new list item";
+                                const ul = creationArea.querySelector('ul');
+                                if (ul) {
+                                    ul.appendChild(newElement);
+                                    newElement = null; // Don't append to main area
+                                } else {
+                                    const newUl = document.createElement('ul');
+                                    newUl.appendChild(newElement);
+                                    newElement = newUl;
+                                }
+                                break;
+                            case 'b':
+                            case 'i':
+                            case 'span':
+                            case 'em':
+                            case 'strong':
+                                newElement = document.createElement(tag);
+                                newElement.textContent = `Some ${tag} text.`;
+                                break;
+                            case 'div':
+                                newElement = document.createElement('div');
+                                newElement.textContent = "A simple box or container.";
+                                newElement.style.padding = '10px';
+                                newElement.style.border = '1px solid #ddd';
+                                newElement.style.margin = '10px 0';
+                                break;
+                            case 'br':
+                                newElement = document.createElement('br');
+                                break;
+                            case 'hr':
+                                newElement = document.createElement('hr');
+                                break;
+                            case 'table':
+                                newElement = document.createElement('table');
+                                newElement.innerHTML = `
+                                    <thead><tr><th>Header 1</th><th>Header 2</th></tr></thead>
+                                    <tbody><tr><td>Data 1</td><td>Data 2</td></tr></tbody>
+                                `;
+                                break;
+                            case 'tr':
+                                newElement = document.createElement('tr');
+                                newElement.innerHTML = `<td>New Row Data 1</td><td>New Row Data 2</td>`;
+                                const tbody = creationArea.querySelector('tbody');
+                                if (tbody) {
+                                    tbody.appendChild(newElement);
+                                    newElement = null; // Don't append to main area
+                                } else {
+                                    const newTable = document.createElement('table');
+                                    const newTbody = document.createElement('tbody');
+                                    newTbody.appendChild(newElement);
+                                    newTable.appendChild(newTbody);
+                                    newElement = newTable;
+                                }
+                                break;
+                            case 'td':
+                                newElement = document.createElement('td');
+                                newElement.textContent = "New Cell";
+                                const lastTr = creationArea.querySelector('tr:last-of-type');
+                                if (lastTr) {
+                                    lastTr.appendChild(newElement);
+                                    newElement = null; // Don't append to main area
+                                } else {
+                                    const newTable = document.createElement('table');
+                                    const newTbody = document.createElement('tbody');
+                                    const newTr = document.createElement('tr');
+                                    newTr.appendChild(newElement);
+                                    newTbody.appendChild(newTr);
+                                    newTable.appendChild(newTbody);
+                                    newElement = newTable;
+                                }
+                                break;
+                            case 'button':
+                                newElement = document.createElement('button');
+                                newElement.textContent = "Click Me!";
+                                newElement.addEventListener('click', () => alert("Button clicked!"));
+                                break;
+                        }
+
+                        if (newElement) {
+                            creationArea.appendChild(newElement);
+                        }
+
+                        // Advance to the next prompt
+                        currentPromptIndex++;
+                        setTimeout(updatePrompt, 1500); // Wait a bit before showing the next prompt
+                    } else {
+                        showFeedback(false, `That's not the correct tag. Try using the ${correctTag} tag.`);
                     }
-                    creationArea.appendChild(newElement);
                 }
             });
 
             // Listen for clicks on the clear button
             clearButton.addEventListener('click', () => {
                 creationArea.innerHTML = '';
+                currentPromptIndex = 0; // Reset game
+                updatePrompt();
             });
 
             // Prevent the default behavior of anchor tags
@@ -379,6 +456,9 @@
                     event.preventDefault();
                 }
             });
+
+            // Start the game
+            updatePrompt();
         });
 
         // Custom alert function since native alerts are blocked in some environments
